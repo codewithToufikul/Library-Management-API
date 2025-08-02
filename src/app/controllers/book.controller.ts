@@ -53,6 +53,12 @@ bookRoute.get("/:bookId", async (req: Request, res: Response) => {
   try {
     const { bookId } = req.params;
     const book = await Book.findById({ _id: bookId });
+    if (!book) {
+      return res.status(404).json({
+        success: false,
+        message: "Book not found",
+      });
+    }
     res.status(201).json({
       success: true,
       message: "Book retrieved successfully",
@@ -83,6 +89,7 @@ bookRoute.put("/:bookId", async (req: Request, res: Response) => {
         message: "Book not found",
       });
     }
+    await Book.updateAvailability(bookId);
     res.status(201).json({
       success: true,
       message: "Book updated successfully",
@@ -99,10 +106,23 @@ bookRoute.put("/:bookId", async (req: Request, res: Response) => {
 
 bookRoute.delete("/:bookId", async (req: Request, res: Response) => {
   try {
+    const { bookId } = req.params;
+    const book = await Book.findByIdAndDelete(bookId);
+    if (!book) {
+      return res.status(404).json({
+        success: false,
+        message: "Book not found",
+      });
+    }
+    res.status(201).json({
+      success: true,
+      message: "Book deleted successfully",
+      data: null,
+    });
   } catch (error: any) {
     res.status(400).json({
       success: false,
-      message: error.message || "Failed to Update book",
+      message: error.message || "Failed to Delete book",
       error,
     });
   }
