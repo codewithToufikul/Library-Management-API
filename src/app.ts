@@ -1,15 +1,15 @@
 import express, { Application, Request, Response } from 'express';
 import dotenv from "dotenv";
 import cors from "cors";
+import { bookRoute } from './app/controllers/book.controller';
 
 
 const app: Application = express();
 app.use(express.json());
-app.use(cors({
-  origin: 'https://hidayah-client.vercel.app', 
-  credentials: true                
-}));
+app.use(cors());
 dotenv.config();
+
+app.use("/api/books", bookRoute)
 
 app.get('/', (req: Request, res: Response) => {
     res.send('Api is running');
